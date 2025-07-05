@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String name;
+    private String fullName;
     private int age;
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
