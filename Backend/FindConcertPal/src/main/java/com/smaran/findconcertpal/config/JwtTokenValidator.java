@@ -13,38 +13,45 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JwtTokenValidator extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String  jwt=request.getHeader(JwtConstant.JWT_HEADER);
+        String jwt = request.getHeader(JwtConstant.JWT_HEADER);
 
-        //We receive:Bearer jwtToken, so we extract 7 chars just to get jwt
-        if(jwt!=null){
-            jwt=jwt.substring(7);
-            try{
-                //Extract Claims
+        if(jwt != null && jwt.startsWith("Bearer ")) {
+            try {
+                jwt = jwt.substring(7);
+                
                 SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
                 Claims claims = Jwts.parserBuilder()
                         .setSigningKey(key)
-                        .build().
-                        parseClaimsJws(jwt)
+                        .build()
+                        .parseClaimsJws(jwt)
                         .getBody();
 
-                String email=String.valueOf(claims.get("email"));
-                String authorities=String.valueOf(claims.get("authorities"));
+                String email = String.valueOf(claims.get("email"));
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                
+                // Create UserDetails object
+                UserDetails userDetails = User.builder()
+                    .username(email)
+                    .password("") // We don't need the password for token authentication
+                    .authorities(authorities)
+                    .build();
 
-                List<GrantedAuthority> auths = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-
-                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auths);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            catch (Exception e){
+            catch (Exception e) {
                 throw new BadCredentialsException("Invalid token!");
             }
         }
