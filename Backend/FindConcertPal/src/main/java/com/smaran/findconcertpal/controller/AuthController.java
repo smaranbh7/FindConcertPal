@@ -53,6 +53,7 @@ public class AuthController {
         newUser.setCity(user.getCity());
         newUser.setState(user.getState());
         newUser.setCountry(user.getCountry());
+        User savedUser= userRepo.save(newUser);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -66,6 +67,7 @@ public class AuthController {
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
             @RequestBody LoginRequest loginRequest
             ) throws Exception{
