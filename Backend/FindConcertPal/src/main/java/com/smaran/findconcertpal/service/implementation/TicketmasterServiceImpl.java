@@ -50,8 +50,9 @@ public class TicketmasterServiceImpl implements TicketmasterService {
                     JsonNode venues = event.path("_embedded").path("venues");
                     if (venues.isArray() && !venues.isEmpty()) {
                         concert.setVenue(venues.get(0).path("name").asText());
+                        concert.setCity(getCity(venues.get(0)));
                     }
-                    
+
                     // Get image if available
                     JsonNode images = event.path("images");
                     if (images.isArray() && images.size() > 0) {
@@ -68,4 +69,25 @@ public class TicketmasterServiceImpl implements TicketmasterService {
         }
     }
 
+    private String getCity(JsonNode venue) {
+        if (venue == null) {
+            return "Unknown City";
+        }
+
+        JsonNode cityNode = venue.path("city");
+        if (!cityNode.isMissingNode() && cityNode.has("name")) {
+            String city = cityNode.path("name").asText();
+            if (!city.isEmpty()) {
+                return city;
+            }
+        }
+
+        // Fallback to address if city is not directly available
+        JsonNode addressNode = venue.path("address");
+        if (!addressNode.isMissingNode() && addressNode.has("line1")) {
+            return addressNode.path("line1").asText();
+        }
+
+        return "Unknown City";
+    }
 }
