@@ -33,6 +33,9 @@ public class User {
 
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserConcert> userConcerts;
+
     private boolean isActive;
 
 

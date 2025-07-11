@@ -6,5 +6,5 @@ import com.smaran.findconcertpal.model.User;
 import java.util.List;
 
 public interface TicketmasterService {
-    public List<ConcertDTO> getConcertsByUserPreferences(User user);
+     List<ConcertDTO> getConcertsByUserPreferences(User user);
 }
