@@ -2,6 +2,7 @@ package com.smaran.findconcertpal.controller;
 
 import com.smaran.findconcertpal.dto.ConcertDTO;
 import com.smaran.findconcertpal.model.User;
+import com.smaran.findconcertpal.model.UserConcert;
 import com.smaran.findconcertpal.repo.UserRepo;
 import com.smaran.findconcertpal.response.ServerResponse;
 import com.smaran.findconcertpal.service.ConcertService;
@@ -54,8 +55,22 @@ public class ConcertController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User user= userRepo.findByEmail(userDetails.getUsername());
-        concertService.addConcertToUser(user.getId(), concertId);
+        concertService.addUserConcertToGoing(user.getId(), concertId);
         ServerResponse serverResponse= new ServerResponse("Concert added to user");
         return new ResponseEntity<>(serverResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/matchingConcerts")
+    public ResponseEntity<List<UserConcert>> userMatchingConcerts(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) throws Exception{
+        if(userDetails == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user= userRepo.findByEmail(userDetails.getUsername());
+        List<UserConcert> concerts = concertService.userMatchingConcerts(user);
+        return new ResponseEntity<>(concerts, HttpStatus.OK);
+    }
+
+
 }

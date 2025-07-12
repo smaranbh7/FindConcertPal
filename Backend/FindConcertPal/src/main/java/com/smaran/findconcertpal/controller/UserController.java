@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/profile")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserRepo userRepo;
@@ -29,4 +29,6 @@ public class UserController {
         }
         return ResponseEntity.ok(user);
     }
+
+
 }

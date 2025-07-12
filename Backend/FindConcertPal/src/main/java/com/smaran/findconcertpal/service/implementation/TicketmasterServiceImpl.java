@@ -47,7 +47,6 @@ public class TicketmasterServiceImpl implements TicketmasterService {
                     concert.setDate(event.path("dates").path("start").path("localDate").asText());
 
                     JsonNode venues = event.path("_embedded").path("venues");
-                    JsonNode city = venues.path("city");
                     if (venues.isArray() && !venues.isEmpty()) {
                         concert.setVenue(venues.get(0).path("name").asText());
                         concert.setCity(venues.get(0).path("city").path("name").asText());
