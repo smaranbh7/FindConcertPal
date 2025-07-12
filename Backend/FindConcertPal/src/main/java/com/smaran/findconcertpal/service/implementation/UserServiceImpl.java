@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepo userRepo;
+     final UserRepo userRepo;
 
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;

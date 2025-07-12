@@ -1,22 +1,24 @@
 package com.smaran.findconcertpal.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
 @Data
 @Entity
-public class MatchRequest {
+public class UserMatch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long senderId;
-    private Long receiverId;
+
+//    @ManyToOne
+//    private User senderId;
+//
+//    @ManyToOne
+//    private User receiverId;
 
     private String concertId; // Concert both users are attending
 

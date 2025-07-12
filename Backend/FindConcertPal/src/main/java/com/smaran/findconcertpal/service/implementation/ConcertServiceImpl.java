@@ -10,16 +10,17 @@ import com.smaran.findconcertpal.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ConcertServiceImpl implements ConcertService {
 
-    final UserService userService;
+    final private UserService userService;
 
-    final TicketmasterService ticketmasterService;
+    final private TicketmasterService ticketmasterService;
 
-    final UserConcertRepo userConcertRepo;
+    final private UserConcertRepo userConcertRepo;
 
 
     public ConcertServiceImpl(UserService userService, TicketmasterService ticketmasterService, UserConcertRepo userConcertRepo) {
@@ -32,7 +33,7 @@ public class ConcertServiceImpl implements ConcertService {
     public List<UserConcert> userMatchingConcerts(User user) throws Exception {
         List<UserConcert> userConcerts= userConcertRepo.findUserConcertByUserId(user.getId());
         if(userConcerts.isEmpty()){
-            throw new Exception("No Going/Interested concerts found!");
+           return new ArrayList<>();
         }
         return userConcerts;
     }

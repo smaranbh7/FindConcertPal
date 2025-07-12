@@ -36,6 +36,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserConcert> userConcerts;
 
+//    @OneToMany(mappedBy = "senderId, receiverId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<UserMatch> userMatches;
+
     private boolean isActive;
 
 
