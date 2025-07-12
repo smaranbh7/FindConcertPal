@@ -10,5 +10,5 @@ import java.util.List;
 public interface ConcertService {
     List<UserConcert> userMatchingConcerts(User user) throws Exception;
     void addUserConcertToGoing(Long userId, String concertId) throws Exception;
-    void userConcertNotGoing(Long userId, String concertId) throws Exception;
+    void userConcertNotGoing(String concertId) throws Exception;
 }

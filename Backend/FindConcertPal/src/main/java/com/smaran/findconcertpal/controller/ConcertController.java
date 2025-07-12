@@ -72,5 +72,19 @@ public class ConcertController {
         return new ResponseEntity<>(concerts, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{concertId}")
+    public ResponseEntity<ServerResponse> deleteUserMatchingConcerts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable String concertId
+    ) throws Exception {
+        if(userDetails == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        concertService.userConcertNotGoing(concertId);
+        ServerResponse response = new ServerResponse("Matching userConcert deleted successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }

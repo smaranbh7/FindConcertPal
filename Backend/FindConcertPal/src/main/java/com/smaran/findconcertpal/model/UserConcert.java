@@ -33,7 +33,6 @@ public class UserConcert {
     public enum AttendanceStatus {
         GOING,
         INTERESTED,
-        NOTGOING
     }
 
     @PrePersist

@@ -7,6 +7,7 @@ import com.smaran.findconcertpal.repo.UserConcertRepo;
 import com.smaran.findconcertpal.service.ConcertService;
 import com.smaran.findconcertpal.service.TicketmasterService;
 import com.smaran.findconcertpal.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,7 +66,9 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    public void userConcertNotGoing(Long userId, String concertId) throws Exception {
+    @Transactional
+    public void userConcertNotGoing(String concertId) throws Exception {
+        userConcertRepo.deleteUserConcertByConcertId(concertId);
 
     }
 }
