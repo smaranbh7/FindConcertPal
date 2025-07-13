@@ -3,5 +3,5 @@ package com.smaran.findconcertpal.repo;
 import com.smaran.findconcertpal.model.UserMatch;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MatchRequestRepo extends JpaRepository<UserMatch, Long> {
+public interface UserMatchRepo extends JpaRepository<UserMatch, Long> {
 }

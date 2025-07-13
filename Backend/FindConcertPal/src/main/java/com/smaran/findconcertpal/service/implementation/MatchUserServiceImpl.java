@@ -3,9 +3,12 @@ package com.smaran.findconcertpal.service.implementation;
 import com.smaran.findconcertpal.dto.UserDTO;
 import com.smaran.findconcertpal.model.User;
 import com.smaran.findconcertpal.model.UserConcert;
+import com.smaran.findconcertpal.model.UserMatch;
 import com.smaran.findconcertpal.repo.UserConcertRepo;
+import com.smaran.findconcertpal.repo.UserMatchRepo;
 import com.smaran.findconcertpal.service.ConcertService;
 import com.smaran.findconcertpal.service.MatchUserService;
+import com.smaran.findconcertpal.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,10 +19,15 @@ public class MatchUserServiceImpl implements MatchUserService {
 
     private final UserConcertRepo userConcertRepo;
     private final ConcertService concertService;
+    private final UserMatchRepo userMatchRepo;
+    private final UserService userService;
 
-    public MatchUserServiceImpl(UserConcertRepo userConcertRepo, ConcertService concertService){
+
+    public MatchUserServiceImpl(UserConcertRepo userConcertRepo, ConcertService concertService, UserMatchRepo userMatchRepo, UserService userService){
         this.userConcertRepo=userConcertRepo;
         this.concertService= concertService;
+        this.userMatchRepo=userMatchRepo;
+        this.userService= userService;
     }
 
     @Override
@@ -41,6 +49,20 @@ public class MatchUserServiceImpl implements MatchUserService {
         return potentialMatchingUsers;
     }
 
+    @Override
+    public void sendMatchRequest(Long senderId, Long receiverId) throws Exception {
+        User sender = userService.findUserById(senderId);
+        User receiver = userService.findUserById(receiverId);
+
+        UserMatch userMatchRequest = new UserMatch();
+        userMatchRequest.setSender(sender);
+        userMatchRequest.setReceiver(receiver);
+        userMatchRequest.setStatus(UserMatch.RequestStatus.PENDING);
+        userMatchRepo.save(userMatchRequest);
+    }
+
+
+    //Listing potential matching user logics
     @Override
     public List<UserDTO> usersGoingSameConcerts(String concertId) throws Exception {
         List<UserConcert> userConcerts= userConcertRepo.findUserConcertByConcertId(concertId);

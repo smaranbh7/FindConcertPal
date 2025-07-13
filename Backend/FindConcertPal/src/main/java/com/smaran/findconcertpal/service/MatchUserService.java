@@ -8,4 +8,5 @@ import java.util.List;
 public interface MatchUserService {
     List<UserDTO> matchingUsers(User user) throws Exception;
     List<UserDTO> usersGoingSameConcerts(String concertId ) throws Exception;
+    void sendMatchRequest(Long senderId, Long receiverId) throws Exception;
 }

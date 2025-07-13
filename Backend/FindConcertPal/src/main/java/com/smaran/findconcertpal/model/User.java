@@ -33,11 +33,14 @@ public class User {
 
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserConcert> userConcerts;
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserMatch> sentMatches;
 
-//    @OneToMany(mappedBy = "senderId, receiverId", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<UserMatch> userMatches;
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserMatch> receivedMatches;
+
+
+
 
     private boolean isActive;
 

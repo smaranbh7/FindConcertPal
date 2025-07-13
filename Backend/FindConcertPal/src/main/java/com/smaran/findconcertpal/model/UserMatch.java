@@ -14,11 +14,10 @@ public class UserMatch {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-//    @ManyToOne
-//    private User senderId;
-//
-//    @ManyToOne
-//    private User receiverId;
+    @ManyToOne
+    private User sender;
+    @ManyToOne
+    private User receiver;
 
     private String concertId; // Concert both users are attending
 

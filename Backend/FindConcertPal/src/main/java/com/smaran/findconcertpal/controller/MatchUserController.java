@@ -2,16 +2,14 @@ package com.smaran.findconcertpal.controller;
 
 import com.smaran.findconcertpal.dto.UserDTO;
 import com.smaran.findconcertpal.model.User;
+import com.smaran.findconcertpal.response.ServerResponse;
 import com.smaran.findconcertpal.service.MatchUserService;
 import com.smaran.findconcertpal.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,11 +17,16 @@ import java.util.List;
 @RequestMapping("/api/match")
 public class MatchUserController {
 
-    @Autowired
+    final
     MatchUserService matchUserService;
 
-    @Autowired
+    final
     UserService userService;
+
+    public MatchUserController(MatchUserService matchUserService, UserService userService) {
+        this.matchUserService = matchUserService;
+        this.userService = userService;
+    }
 
 
     @GetMapping
@@ -37,5 +40,20 @@ public class MatchUserController {
         List<UserDTO> users = matchUserService.matchingUsers(user);
 
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<ServerResponse> sendMatchRequest(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Long receiverId
+    )throws Exception{
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        matchUserService.sendMatchRequest(user.getId(), receiverId);
+
+        ServerResponse response = new ServerResponse("Request sent to user successfully!");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
