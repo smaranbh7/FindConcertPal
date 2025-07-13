@@ -1,6 +1,7 @@
 package com.smaran.findconcertpal.controller;
 
 import com.smaran.findconcertpal.dto.UserDTO;
+import com.smaran.findconcertpal.dto.UserMatchDTO;
 import com.smaran.findconcertpal.model.User;
 import com.smaran.findconcertpal.response.ServerResponse;
 import com.smaran.findconcertpal.service.MatchUserService;
@@ -54,6 +55,34 @@ public class MatchUserController {
         matchUserService.sendMatchRequest(user.getId(), receiverId);
 
         ServerResponse response = new ServerResponse("Request sent to user successfully!");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/receivedRequests")
+    public ResponseEntity<List<UserMatchDTO>> getReceivedRequests(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) throws Exception {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        List<UserMatchDTO> userDTOS = matchUserService.receivedMatchingRequests(user);
+
+        return new ResponseEntity<>(userDTOS, HttpStatus.OK);
+    }
+
+    @PostMapping("/receivedRequests/accept")
+    public ResponseEntity<ServerResponse> acceptMatchRequest(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Long userMatchId
+    ) throws Exception{
+        if(userDetails == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        matchUserService.acceptMatchRequest(user, userMatchId);
+
+        ServerResponse response = new ServerResponse("User Matched Successfully!");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
