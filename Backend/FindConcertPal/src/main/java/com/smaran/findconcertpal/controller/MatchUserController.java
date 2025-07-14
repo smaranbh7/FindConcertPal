@@ -59,14 +59,14 @@ public class MatchUserController {
     }
 
     @GetMapping("/receivedRequests")
-    public ResponseEntity<List<UserMatchDTO>> getReceivedRequests(
+    public ResponseEntity<List<UserMatchDTO>> getMatchRequests(
             @AuthenticationPrincipal UserDetails userDetails
     ) throws Exception {
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User user = userService.findUserByEmail(userDetails.getUsername());
-        List<UserMatchDTO> userDTOS = matchUserService.receivedMatchingRequests(user);
+        List<UserMatchDTO> userDTOS = matchUserService.getMatchRequests(user);
 
         return new ResponseEntity<>(userDTOS, HttpStatus.OK);
     }

@@ -11,5 +11,5 @@ public interface MatchUserService {
     List<UserDTO> usersGoingSameConcerts(String concertId ) throws Exception;
     void sendMatchRequest(Long senderId, Long receiverId) throws Exception;
     void acceptMatchRequest(User user, Long userMatchId) throws Exception;
-    List<UserMatchDTO> receivedMatchingRequests(User user) throws Exception;
+    List<UserMatchDTO> getMatchRequests(User user) throws Exception;
 }
