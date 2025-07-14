@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface UserMatchRepo extends JpaRepository<UserMatch, Long> {
     List<UserMatch> findUserMatchByReceiver(User user);
+    UserMatch findUserMatchById(Long userMatchId);
 }

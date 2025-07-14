@@ -4,7 +4,7 @@ import com.smaran.findconcertpal.dto.UserDTO;
 import com.smaran.findconcertpal.dto.UserMatchDTO;
 import com.smaran.findconcertpal.model.User;
 import com.smaran.findconcertpal.response.ServerResponse;
-import com.smaran.findconcertpal.service.MatchUserService;
+import com.smaran.findconcertpal.service.UserMatchService;
 import com.smaran.findconcertpal.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +16,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/match")
-public class MatchUserController {
+public class UserMatchController {
 
     final
-    MatchUserService matchUserService;
+    UserMatchService userMatchService;
 
     final
     UserService userService;
 
-    public MatchUserController(MatchUserService matchUserService, UserService userService) {
-        this.matchUserService = matchUserService;
+    public UserMatchController(UserMatchService userMatchService, UserService userService) {
+        this.userMatchService = userMatchService;
         this.userService = userService;
     }
 
@@ -38,7 +38,7 @@ public class MatchUserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User user = userService.findUserByEmail(userDetails.getUsername());
-        List<UserDTO> users = matchUserService.matchingUsers(user);
+        List<UserDTO> users = userMatchService.matchingUsers(user);
 
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class MatchUserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User user = userService.findUserByEmail(userDetails.getUsername());
-        matchUserService.sendMatchRequest(user.getId(), receiverId);
+        userMatchService.sendMatchRequest(user.getId(), receiverId);
 
         ServerResponse response = new ServerResponse("Request sent to user successfully!");
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -66,7 +66,7 @@ public class MatchUserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User user = userService.findUserByEmail(userDetails.getUsername());
-        List<UserMatchDTO> userDTOS = matchUserService.getMatchRequests(user);
+        List<UserMatchDTO> userDTOS = userMatchService.getMatchRequests(user);
 
         return new ResponseEntity<>(userDTOS, HttpStatus.OK);
     }
@@ -80,9 +80,25 @@ public class MatchUserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User user = userService.findUserByEmail(userDetails.getUsername());
-        matchUserService.acceptMatchRequest(user, userMatchId);
+        userMatchService.acceptMatchRequest(user, userMatchId);
 
         ServerResponse response = new ServerResponse("User Matched Successfully!");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/receivedRequests/delete")
+    public ResponseEntity<ServerResponse> deleteMatchRequest(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Long matchId
+    ) throws Exception{
+        if(userDetails == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        userMatchService.deleteMatchRequest(user, matchId);
+
+        ServerResponse response = new ServerResponse("User deleted successfully!");
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

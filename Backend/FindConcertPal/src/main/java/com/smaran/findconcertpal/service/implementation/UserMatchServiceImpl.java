@@ -8,7 +8,7 @@ import com.smaran.findconcertpal.model.UserMatch;
 import com.smaran.findconcertpal.repo.UserConcertRepo;
 import com.smaran.findconcertpal.repo.UserMatchRepo;
 import com.smaran.findconcertpal.service.ConcertService;
-import com.smaran.findconcertpal.service.MatchUserService;
+import com.smaran.findconcertpal.service.UserMatchService;
 import com.smaran.findconcertpal.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MatchUserServiceImpl implements MatchUserService {
+public class UserMatchServiceImpl implements UserMatchService {
 
     private final UserConcertRepo userConcertRepo;
     private final ConcertService concertService;
@@ -26,7 +26,7 @@ public class MatchUserServiceImpl implements MatchUserService {
     private final UserService userService;
 
 
-    public MatchUserServiceImpl(UserConcertRepo userConcertRepo, ConcertService concertService, UserMatchRepo userMatchRepo, UserService userService){
+    public UserMatchServiceImpl(UserConcertRepo userConcertRepo, ConcertService concertService, UserMatchRepo userMatchRepo, UserService userService){
         this.userConcertRepo=userConcertRepo;
         this.concertService= concertService;
         this.userMatchRepo=userMatchRepo;
@@ -77,6 +77,18 @@ public class MatchUserServiceImpl implements MatchUserService {
         } else {
             throw new Exception("Match request not found");
         }
+
+    }
+
+    @Override
+    public void deleteMatchRequest(User user, Long matchId) throws Exception {
+        UserMatch userMatch = userMatchRepo.findUserMatchById(matchId);
+        if (!userMatch.getSender().getId().equals(user.getId()) &&
+                !userMatch.getReceiver().getId().equals(user.getId())) {
+            throw new Exception("You are not authorized to delete this match request");
+        }
+
+        userMatchRepo.delete(userMatch);
 
     }
 
