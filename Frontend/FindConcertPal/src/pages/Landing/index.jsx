@@ -1,7 +1,8 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
+  const navigate = useNavigate ();
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f0f23] via-[#2d1b69] to-[#8b5cf6] relative overflow-hidden">
       {/* Floating music notes animation */}
@@ -35,16 +36,13 @@ export default function Landing() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Link to="/signup">
-              <button className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-lg rounded-full shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 border-2 border-white/20">
+              <button onClick={()=>navigate("/signin")}
+              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-lg rounded-full shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 border-2 border-white/20">
                 🎸 Start Finding Buddies
               </button>
-            </Link>
-            <Link to="/login">
               <button className="px-8 py-4 bg-white/10 backdrop-blur-md text-white font-semibold text-lg rounded-full border-2 border-white/30 hover:bg-white/20 transition-all duration-300">
                 Sign In
               </button>
-            </Link>
           </div>
 
           {/* How It Works */}
