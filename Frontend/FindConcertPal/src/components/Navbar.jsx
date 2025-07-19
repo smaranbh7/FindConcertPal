@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { logout } from "../redux/auth/Action"
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -9,9 +10,8 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleLogout = () => {
-    // TODO: Dispatch logout action
-    // dispatch(logout());
-    console.log("Logout clicked");
+     dispatch(logout());
+     navigate("/");
   };
 
   return (
@@ -68,10 +68,10 @@ export default function Navbar() {
                   className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 focus:outline-none"
                 >
                   <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-medium">
-                    {auth.user.firstName?.charAt(0) || "U"}
+                    {auth.user.fullName?.charAt(0) || "U"}
                   </div>
                   <span className="hidden md:block text-sm font-medium">
-                    {auth.user.firstName || "User"}
+                    {auth.user.fullName|| "User"}
                   </span>
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
