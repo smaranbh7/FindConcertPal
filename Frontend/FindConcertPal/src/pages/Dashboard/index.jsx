@@ -68,10 +68,10 @@ export default function Dashboard() {
                   <span className="text-3xl ml-3 animate-bounce">🎵</span>
                 </h1>
                 <p className="text-gray-300 text-xl max-w-lg mb-2">
-                  Concerts tailored for your location:{" "}
+                  Concerts tailored for:{" "}
                   <span className="font-bold text-blue-400">
-                    {auth.user?.city && auth.user?.state
-                      ? `${auth.user.city}, ${auth.user.state}`
+                    {auth.user?.city && auth.user?.state &&auth.user?.genres
+                      ? `${auth.user.genres}  in ${auth.user.city}, ${auth.user.state}`
                       : "Your Location"}
                   </span>
                 </p>

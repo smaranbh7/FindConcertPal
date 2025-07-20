@@ -11,7 +11,10 @@ import {
     REMOVE_CONCERT_STATUS_SUCCESS,
     FETCH_CONCERTS_FAILURE, 
     FETCH_CONCERTS_REQUEST, 
-    FETCH_CONCERTS_SUCCESS 
+    FETCH_CONCERTS_SUCCESS, 
+    MY_CONCERTS_REQUEST,
+    MY_CONCERTS_FAILURE,
+    MY_CONCERTS_SUCCESS
 } from "./ActionTypes";
 
 const initialState ={
@@ -27,6 +30,7 @@ export const concertReducer = (state=initialState, action)=>{
         case ADD_CONCERTS_GOING_REQUEST:
         case ADD_CONCERTS_INTERESTED_REQUEST:
         case REMOVE_CONCERT_STATUS_REQUEST:
+        case MY_CONCERTS_REQUEST:
             return {...state, loading: true, error: null};
 
         case ADD_CONCERTS_GOING_SUCCESS:
@@ -44,6 +48,9 @@ export const concertReducer = (state=initialState, action)=>{
 
         case FETCH_CONCERTS_SUCCESS:
             return {...state, loading:false, concerts:action.concerts, error: null};
+        
+        case MY_CONCERTS_SUCCESS:
+            return {...state, loading:false, concerts:action.concert, error:null};
 
         case ADD_CONCERTS_INTERESTED_SUCCESS:
             return {
@@ -75,6 +82,7 @@ export const concertReducer = (state=initialState, action)=>{
         case ADD_CONCERTS_GOING_FAILURE:
         case ADD_CONCERTS_INTERESTED_FAILURE:
         case REMOVE_CONCERT_STATUS_FAILURE:
+        case MY_CONCERTS_FAILURE:
             return {...state, loading: false, error: action.error};
             
         default:

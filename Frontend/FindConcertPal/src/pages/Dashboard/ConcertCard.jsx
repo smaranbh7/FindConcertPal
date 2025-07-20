@@ -55,7 +55,7 @@ export default function ConcertCard({ concert, onStatusChange }) {
           <div className="flex items-center">
             <span className="w-4 h-4 mr-3 text-purple-400">📍</span>
             <span>
-              {concert.venue}, {concert.location}
+              {concert.venue}, {concert.city}
             </span>
           </div>
 

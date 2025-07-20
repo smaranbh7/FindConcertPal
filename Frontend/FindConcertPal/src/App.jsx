@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import Signup from "./pages/Auth/Signup"
 import Landing from "./pages/Landing"
 import Dashboard from "./pages/Dashboard"
+import MyConcerts from "./pages/MyConcerts"
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getUser } from "./redux/auth/Action";
@@ -33,6 +34,8 @@ function App() {
       {auth.user ?(
       <>
       <Route path="/" element={<Dashboard />}/>
+      <Route path="/dashboard" element={<Dashboard />}/>
+      <Route path="/my-concerts" element={<MyConcerts />}/>
       </>
     ):(
       <>

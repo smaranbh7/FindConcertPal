@@ -11,7 +11,9 @@ import {
     REMOVE_CONCERT_STATUS_FAILURE,
     FETCH_CONCERTS_REQUEST, 
     FETCH_CONCERTS_SUCCESS,
-    FETCH_CONCERTS_FAILURE
+    FETCH_CONCERTS_FAILURE,
+    MY_CONCERTS_REQUEST,
+    MY_CONCERTS_SUCCESS
 } from './ActionTypes'
 
 
@@ -63,4 +65,16 @@ export const removeConcertStatus=(concertId) => async(dispatch) =>{
         console.log("Error removing concert status", error);
         dispatch({type: REMOVE_CONCERT_STATUS_FAILURE, error: error.message});
     }
+}
+
+export const myConcerts=() => async(dispatch)=>{
+    dispatch({type:MY_CONCERTS_REQUEST});
+    try{
+        const { data } = await api.get("/api/concerts/matchingConcerts")
+        dispatch({type: MY_CONCERTS_SUCCESS, concert:data})
+        console.log("My concerts ", data);
+    }catch(error){
+        console.log("Error fetching my concerts ", error);
+    }
+
 }
