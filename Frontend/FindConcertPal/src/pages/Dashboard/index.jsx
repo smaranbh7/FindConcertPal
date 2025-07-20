@@ -1,185 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../../components/Navbar";
-import { fetchConcerts } from "../../redux/concert/Action";
+import ConcertCard from "./ConcertCard";
+import { fetchConcerts, addConcertToGoing, addConcertToInterested, removeConcertStatus } from "../../redux/concert/Action";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
   const { auth, concert } = useSelector((store) => store);
-
-  //Mock concert data - you'll replace this with Redux data
-  const mockConcerts = [
-    {
-      id: 1,
-      title: "Taylor Swift - Eras Tour",
-      artist: "Taylor Swift",
-      venue: "MetLife Stadium",
-      date: "2024-05-15",
-      time: "19:30",
-      location: "East Rutherford, NJ",
-      genre: "Pop",
-      price: "$150 - $350",
-      image:
-        "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-      attendees: 145,
-      userStatus: null, // null, 'going', 'interested'
-    },
-    {
-      id: 2,
-      title: "The Weeknd - After Hours",
-      artist: "The Weeknd",
-      venue: "Madison Square Garden",
-      date: "2024-06-20",
-      time: "20:00",
-      location: "New York, NY",
-      genre: "R&B",
-      price: "$75 - $250",
-      image:
-        "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&h=300&fit=crop",
-      attendees: 89,
-      userStatus: null,
-    },
-    {
-      id: 3,
-      title: "Imagine Dragons - Mercury Tour",
-      artist: "Imagine Dragons",
-      venue: "Barclays Center",
-      date: "2024-07-10",
-      time: "19:00",
-      location: "Brooklyn, NY",
-      genre: "Rock",
-      price: "$60 - $180",
-      image:
-        "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=300&fit=crop",
-      attendees: 67,
-      userStatus: "going",
-    },
-    {
-      id: 4,
-      title: "Billie Eilish - Happier Than Ever",
-      artist: "Billie Eilish",
-      venue: "Prudential Center",
-      date: "2024-08-05",
-      time: "19:30",
-      location: "Newark, NJ",
-      genre: "Alternative",
-      price: "$85 - $220",
-      image:
-        "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-      attendees: 102,
-      userStatus: "interested",
-    },
-  ];
 
   useEffect(() => {
     dispatch(fetchConcerts());
   }, [dispatch]);
 
   const handleStatusChange = (concertId, newStatus) => {
-    // TODO: Dispatch Redux action to update concert status
-    console.log(`Concert ${concertId}: ${newStatus}`);
-  };
-
-  const getStatusDisplay = (status) => {
-    switch (status) {
-      case "going":
-        return { text: "✓ Going", color: "text-emerald-500" };
-      case "interested":
-        return { text: "⭐ Interested", color: "text-amber-500" };
-      default:
-        return { text: "Not Interested", color: "text-gray-400" };
+    console.log("handleStatusChange called with:", { concertId, newStatus });
+    if (newStatus === 'going') {
+      dispatch(addConcertToGoing(concertId));
+    } else if (newStatus === 'interested') {
+      dispatch(addConcertToInterested(concertId));
+    } else {
+      // Remove status (newStatus is null or empty)
+      dispatch(removeConcertStatus(concertId));
     }
   };
 
   // Calculate user stats
   const userStats = {
-    going: mockConcerts.filter((c) => c.userStatus === "going").length,
-    interested: mockConcerts.filter((c) => c.userStatus === "interested")
+    going: concert.concerts.filter((c) => c.userStatus === "going").length,
+    interested: concert.concerts.filter((c) => c.userStatus === "interested")
       .length,
-    total: mockConcerts.length,
+    total: concert.concerts.length,
   };
 
-  const ConcertCard = ({ concert }) => {
-    const statusDisplay = getStatusDisplay(concert.userStatus);
 
-    return (
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-        <div className="relative">
-          <img
-            src={concert.imageUrl}
-            alt={concert.title}
-            className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          <div className="absolute top-3 right-3 bg-blue-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium border border-white/20">
-            {concert.genre}
-          </div>
-          {concert.userStatus && (
-            <div
-              className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border border-white/20 ${
-                concert.userStatus === "going"
-                  ? "bg-emerald-500/90 text-white"
-                  : "bg-amber-500/90 text-white"
-              }`}
-            >
-              {concert.userStatus === "going" ? "✓ Going" : "⭐ Interested"}
-            </div>
-          )}
-        </div>
-
-        <div className="p-6">
-          <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">
-            {concert.title}
-          </h3>
-          <p className="text-gray-300 text-sm mb-4">{concert.artist}</p>
-
-          <div className="space-y-3 text-sm text-gray-300">
-            <div className="flex items-center">
-              <span className="w-4 h-4 mr-3 text-blue-400">📅</span>
-              <span>
-                {new Date(concert.date).toLocaleDateString()} at {concert.time}
-              </span>
-            </div>
-            <div className="flex items-center">
-              <span className="w-4 h-4 mr-3 text-purple-400">📍</span>
-              <span>
-                {concert.venue}, {concert.location}
-              </span>
-            </div>
-
-            <div className="flex items-center">
-              <span className="w-4 h-4 mr-3 text-emerald-400">👥</span>
-              <span>{concert.attendees || "0"} people interested</span>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-200 mb-3">
-              Status:{" "}
-              <span className={statusDisplay.color}>{statusDisplay.text}</span>
-            </label>
-            <select
-              value={concert.userStatus || ""}
-              onChange={(e) =>
-                handleStatusChange(concert.id, e.target.value || null)
-              }
-              className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm transition-all"
-            >
-              <option value="" className="bg-gray-800 text-white">
-                Not Interested
-              </option>
-              <option value="interested" className="bg-gray-800 text-white">
-                ⭐ Interested
-              </option>
-              <option value="going" className="bg-gray-800 text-white">
-                ✓ Going
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-800 to-slate-800 relative overflow-hidden">
@@ -283,8 +136,12 @@ export default function Dashboard() {
           {/* Concert Grid */}
           {concert.concerts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {concert.concerts.map((concert) => (
-                <ConcertCard key={concert.id} concert={concert} />
+              {concert.concerts.map((concertItem, index) => (
+                <ConcertCard 
+                  key={concertItem.id || concertItem.concertId || concertItem._id || index} 
+                  concert={concertItem} 
+                  onStatusChange={handleStatusChange}
+                />
               ))}
             </div>
           ) : (
