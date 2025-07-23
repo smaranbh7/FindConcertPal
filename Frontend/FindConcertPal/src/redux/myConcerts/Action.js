@@ -3,9 +3,8 @@ import {
     FETCH_MY_CONCERTS_REQUEST,
     FETCH_MY_CONCERTS_SUCCESS,
     FETCH_MY_CONCERTS_FAILURE,
-    UPDATE_MY_CONCERT_STATUS_REQUEST,
-    UPDATE_MY_CONCERT_STATUS_SUCCESS,
-    UPDATE_MY_CONCERT_STATUS_FAILURE
+    DELETE_MY_CONCERTS_REQUEST,
+    DELETE_MY_CONCERTS_SUCCESS
 } from './ActionTypes'
 
 export const fetchMyConcerts = () => async(dispatch) => {
@@ -20,14 +19,13 @@ export const fetchMyConcerts = () => async(dispatch) => {
     }
 }
 
-export const updateMyConcertStatus = (concertId, status) => async(dispatch) => {
-    dispatch({type: UPDATE_MY_CONCERT_STATUS_REQUEST});
-    try {
-        const { data } = await api.put(`/api/my-concerts/${concertId}/status`, { status });
-        dispatch({type: UPDATE_MY_CONCERT_STATUS_SUCCESS, concertId, status});
-        console.log("Updated concert status:", data);
-    } catch(error) {
-        console.error("Error updating my concert status:", error);
-        dispatch({type: UPDATE_MY_CONCERT_STATUS_FAILURE, error: error.message});
+export const deleteMyConcerts = (concertId) => async(dispatch) =>{
+    dispatch({type: DELETE_MY_CONCERTS_REQUEST});
+    try{
+        const { data } = await api.delete("/api/concerts/"+concertId);
+        dispatch({type:DELETE_MY_CONCERTS_SUCCESS, payload: concertId});
+        console.log(concertId+" deleted successfully");
+    }catch(error){
+        console.log("Error deleting the concert "+error);
     }
-} 
+}

@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../../components/Navbar";
 import MyConcertCard from "./MyConcertCard";
 import { useEffect } from "react";
-import { fetchMyConcerts } from "../../redux/myConcerts/Action";
+import { deleteMyConcerts, fetchMyConcerts } from "../../redux/myConcerts/Action";
 
 export default function MyConcerts() {
   const dispatch = useDispatch();
@@ -12,40 +12,10 @@ export default function MyConcerts() {
     dispatch(fetchMyConcerts());
   },[dispatch])
 
-  // Mock data - you'll replace this with Redux data from your backend
-  const mockConcerts = [
-    {
-      id: 1,
-      title: "Taylor Swift - Eras Tour",
-      artist: "Taylor Swift",
-      venue: "MetLife Stadium",
-      date: "2024-05-15",
-      time: "19:30",
-      location: "East Rutherford, NJ",
-      genre: "Pop",
-      price: "$150 - $350",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-      attendees: 145,
-      userStatus: "going",
-    },
-    {
-      id: 3,
-      title: "Imagine Dragons - Mercury Tour",
-      artist: "Imagine Dragons",
-      venue: "Barclays Center",
-      date: "2024-07-10",
-      time: "19:00",
-      location: "Brooklyn, NY",
-      genre: "Rock",
-      price: "$60 - $180",
-      imageUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=300&fit=crop",
-      attendees: 67,
-      userStatus: "going",
-    },
-  ];
+
 
   const handleDelete = (concertId) => {
-    // TODO: You'll implement this with your Redux actions
+    dispatch(deleteMyConcerts(concertId));
     console.log(`Delete concert ${concertId}`);
   };
 
@@ -96,7 +66,7 @@ export default function MyConcerts() {
                 </div>
                 <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center hover:scale-105 transition-transform">
                   <div className="text-3xl font-black text-blue-400">
-                    {mockConcerts.reduce((sum, concert) => sum + (concert.attendees || 0), 0)}
+                    {myConcerts.concerts.reduce((sum, concert) => sum + (concert.attendees || 0), 0)}
                   </div>
                   <div className="text-gray-300 text-sm font-medium">Total Attendees</div>
                 </div>
