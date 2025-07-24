@@ -22,7 +22,7 @@ export const myConcertsReducer = (state = initialState, action) => {
             return {...state, loading: false, concerts: action.concerts, error: null};
         
         case DELETE_MY_CONCERTS_SUCCESS:
-            return {...state, loading:false, concerts: state.concerts.filter((concert)=>concert.id !== action.payload), error: null};
+            return {...state, loading:false, concerts: state.concerts.filter((concert)=>concert.concertId !== action.payload), error: null};
             
         case FETCH_MY_CONCERTS_FAILURE:
             return {...state, loading: false, error: action.error};

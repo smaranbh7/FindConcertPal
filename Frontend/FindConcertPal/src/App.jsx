@@ -34,7 +34,7 @@ function App() {
       {auth.user ?(
       <>
       <Route path="/" element={<Dashboard />}/>
-      <Route path="/dashboard" element={<Dashboard />}/>
+      <Route path="/home" element={<Dashboard />}/>
       <Route path="/my-concerts" element={<MyConcerts />}/>
       </>
     ):(

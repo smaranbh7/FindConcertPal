@@ -28,7 +28,7 @@ export default function Signup() {
 
   useEffect(() => {
     if (auth.user) {
-      navigate('/');
+      navigate('/home');
     }
   }, [auth.user, navigate]);
 

@@ -30,7 +30,7 @@ export default function Navbar() {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link 
-              to="/dashboard" 
+              to="/home" 
               className="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors"
             >
               Home

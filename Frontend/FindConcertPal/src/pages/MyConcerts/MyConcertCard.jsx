@@ -43,7 +43,7 @@ export default function MyConcertCard({ concert, onDelete }) {
 
         <div className="mt-8 pt-4">
           <button
-            onClick={() => onDelete(concert.id)}
+            onClick={() => onDelete(concert.concertId)}
             className="w-full px-4 py-3 bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-lg text-red-300 hover:bg-red-500/30 hover:text-red-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-sm transition-all font-medium flex items-center justify-center space-x-2"
           >
             <span>🗑️</span>

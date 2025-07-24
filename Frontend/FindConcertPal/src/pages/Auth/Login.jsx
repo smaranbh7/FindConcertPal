@@ -17,7 +17,7 @@ export default function Login() {
 
   useEffect(() => {
     if (auth.user) {
-      navigate('/');
+      navigate("/home");
     }
   }, [auth.user, navigate]);
 
@@ -50,7 +50,7 @@ export default function Login() {
         console.log("JWT found, fetching user profile...");
         // Force navigation to dashboard after successful login
         setTimeout(() => {
-          navigate('/');
+          navigate('/home');
         }, 1000);
       }
     } catch (error) {

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../../components/Navbar";
 import ConcertCard from "./ConcertCard";
-import { fetchConcerts, addConcertToGoing, addConcertToInterested, removeConcertStatus } from "../../redux/concert/Action";
+import { fetchConcerts, addConcertToGoing, removeConcertStatus } from "../../redux/concert/Action";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -16,8 +16,6 @@ export default function Dashboard() {
     console.log("handleStatusChange called with:", { concertId, newStatus });
     if (newStatus === 'going') {
       dispatch(addConcertToGoing(concertId));
-    } else if (newStatus === 'interested') {
-      dispatch(addConcertToInterested(concertId));
     } else {
       // Remove status (newStatus is null or empty)
       dispatch(removeConcertStatus(concertId));
@@ -27,8 +25,6 @@ export default function Dashboard() {
   // Calculate user stats
   const userStats = {
     going: concert.concerts.filter((c) => c.userStatus === "going").length,
-    interested: concert.concerts.filter((c) => c.userStatus === "interested")
-      .length,
     total: concert.concerts.length,
   };
 
@@ -82,8 +78,8 @@ export default function Dashboard() {
               </div>
 
               {/* Enhanced Stats Cards */}
-              <div className="grid grid-cols-3 gap-6 w-full md:w-auto">
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center min-w-[100px] hover:scale-105 transition-transform">
+              <div className="grid grid-cols-2 gap-6 w-full md:w-auto">
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center min-w-[120px] hover:scale-105 transition-transform">
                   <div className="text-3xl font-black text-white">
                     {userStats.total}
                   </div>
@@ -91,19 +87,11 @@ export default function Dashboard() {
                     Available
                   </div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center min-w-[100px] hover:scale-105 transition-transform">
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center min-w-[120px] hover:scale-105 transition-transform">
                   <div className="text-3xl font-black text-emerald-400">
                     {userStats.going}
                   </div>
                   <div className="text-gray-300 text-sm font-medium">Going</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center min-w-[100px] hover:scale-105 transition-transform">
-                  <div className="text-3xl font-black text-amber-400">
-                    {userStats.interested}
-                  </div>
-                  <div className="text-gray-300 text-sm font-medium">
-                    Interested
-                  </div>
                 </div>
               </div>
             </div>
