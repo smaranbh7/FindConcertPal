@@ -3,141 +3,23 @@ import Navbar from "../../components/Navbar";
 import MatchCard from "./MatchCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyConcerts } from "../../redux/myConcerts/Action";
-import { getMatchingUsers } from "../../redux/findMatches/Action";
-
-// Mock data for potential matches based on shared concerts
-const mockMatches = [
-  {
-    id: 1,
-    fullName: "Sarah Johnson",
-    profileImage: "https://images.unsplash.com/photo-1494790108755-2616b612b977?w=400",
-    age: 25,
-    location: "San Francisco, CA",
-    bio: "Love live music! Usually go to concerts alone but would love some company. Always down to grab dinner before shows!",
-    musicGenres: ["Indie Rock", "Electronic", "Alternative"],
-    sharedConcerts: [
-      { title: "Arctic Monkeys", date: "2024-02-15", venue: "Chase Center", status: "going" },
-      { title: "The Weeknd", date: "2024-03-05", venue: "Oakland Arena", status: "going" },
-      { title: "Billie Eilish", date: "2024-03-12", venue: "Bill Graham Civic", status: "going" }
-    ],
-    otherConcerts: ["ODESZA", "Tame Impala"],
-    distance: "2.5 miles away",
-    badges: ["Concert Regular", "Foodie"],
-    goingAlone: true,
-    lookingForGroup: true
-  },
-  {
-    id: 2,
-    fullName: "Mike Chen",
-    profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-    age: 28,
-    location: "San Francisco, CA",
-    bio: "Concert enthusiast who's been going solo for years. Looking to meet cool people and share the experience!",
-    musicGenres: ["Hip-Hop", "Jazz", "R&B"],
-    sharedConcerts: [
-      { title: "Taylor Swift", date: "2024-02-22", venue: "Levi's Stadium", status: "going" },
-      { title: "Bad Bunny", date: "2024-03-20", venue: "Chase Center", status: "going" }
-    ],
-    otherConcerts: ["Kendrick Lamar", "Robert Glasper"],
-    distance: "1.8 miles away",
-    badges: ["Concert Veteran", "Early Bird"],
-    goingAlone: true,
-    lookingForGroup: true
-  },
-  {
-    id: 3,
-    fullName: "Emma Rodriguez",
-    profileImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
-    age: 23,
-    location: "Oakland, CA",
-    bio: "Solo concert goer looking for a squad! Love making new friends and singing along to every song 🎤",
-    musicGenres: ["Pop Punk", "Metal", "Rock"],
-    sharedConcerts: [
-      { title: "Billie Eilish", date: "2024-03-12", venue: "Bill Graham Civic", status: "going" }
-    ],
-    otherConcerts: ["Paramore", "Fall Out Boy", "Olivia Rodrigo"],
-    distance: "8.2 miles away",
-    badges: ["Sing-Along Queen", "Social Butterfly"],
-    goingAlone: true,
-    lookingForGroup: true
-  },
-  {
-    id: 4,
-    fullName: "Alex Thompson",
-    profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
-    age: 30,
-    location: "San Jose, CA",
-    bio: "Usually attend concerts with friends but they're not into these artists. Open to meeting new concert buddies!",
-    musicGenres: ["Classic Rock", "Blues", "Folk"],
-    sharedConcerts: [
-      { title: "Arctic Monkeys", date: "2024-02-15", venue: "Chase Center", status: "going" },
-      { title: "The Weeknd", date: "2024-03-05", venue: "Oakland Arena", status: "going" }
-    ],
-    otherConcerts: ["The Rolling Stones", "Eagles"],
-    distance: "15.3 miles away",
-    badges: ["Music Explorer", "Weekend Warrior"],
-    goingAlone: false,
-    lookingForGroup: true
-  },
-  {
-    id: 5,
-    fullName: "Zoe Kim",
-    profileImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400",
-    age: 26,
-    location: "Berkeley, CA",
-    bio: "Love meeting people at concerts! Always looking to expand my concert crew. Let's vibe together! ✨",
-    musicGenres: ["EDM", "House", "Techno"],
-    sharedConcerts: [
-      { title: "Taylor Swift", date: "2024-02-22", venue: "Levi's Stadium", status: "going" },
-      { title: "Billie Eilish", date: "2024-03-12", venue: "Bill Graham Civic", status: "going" },
-      { title: "Bad Bunny", date: "2024-03-20", venue: "Chase Center", status: "going" }
-    ],
-    otherConcerts: ["Deadmau5", "Above & Beyond"],
-    distance: "6.7 miles away",
-    badges: ["Concert Connector", "Vibe Master"],
-    goingAlone: false,
-    lookingForGroup: true
-  },
-  {
-    id: 6,
-    fullName: "Jordan Williams",
-    profileImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
-    age: 27,
-    location: "San Francisco, CA",
-    bio: "New to the city and don't know many people yet. Would love to make friends through our shared love of music!",
-    musicGenres: ["Country", "Folk", "Americana"],
-    sharedConcerts: [
-      { title: "The Weeknd", date: "2024-03-05", venue: "Oakland Arena", status: "going" }
-    ],
-    otherConcerts: ["Chris Stapleton", "Kacey Musgraves"],
-    distance: "3.1 miles away",
-    badges: ["New in Town", "Friendly Vibes"],
-    goingAlone: true,
-    lookingForGroup: true
-  }
-];
+import { getMatchingUsers, sendMatchRequest } from "../../redux/findMatches/Action";
 
 export default function FindMatches() {
-  const { myConcerts, findMatches  } = useSelector((store)=>store)
+  const { myConcerts, findMatches } = useSelector((store) => store);
   const dispatch = useDispatch();
 
- useEffect(()=>{
-  dispatch(fetchMyConcerts());
- }, [dispatch])
+  useEffect(() => {
+    dispatch(fetchMyConcerts());
+  }, [dispatch]);
 
- useEffect(()=>{
-  dispatch(getMatchingUsers());
- }, [dispatch])
+  useEffect(() => {
+    dispatch(getMatchingUsers());
+  }, [dispatch]);
 
-  const [connectedCards, setConnectedCards] = useState(new Set());
-
-  // Handle connection actions
-  const handleConnect = (matchId, action) => {
-    if (action === 'connect') {
-      setConnectedCards(prev => new Set([...prev, matchId]));
-      const match = mockMatches.find(m => m.id === matchId);
-      console.log(`Connection request sent to ${match?.fullName}`);
-    }
+  const handleSendConnectionRequest = (receiverId) => {
+    console.log(`Sending connection request to user ID: ${receiverId}`);
+    dispatch(sendMatchRequest(receiverId))
   };
 
   return (
@@ -180,8 +62,8 @@ export default function FindMatches() {
               {/* Stats */}
               <div className="flex justify-center space-x-8 text-center">
                 <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 min-w-[120px]">
-                  <div className="text-2xl font-bold text-white">{findMatches.users.length}</div>
-                  <div className="text-gray-300 text-sm">Concert Buddies Availabe</div>
+                  <div className="text-2xl font-bold text-white">{findMatches.users?.length || 0}</div>
+                  <div className="text-gray-300 text-sm">Concert Buddies Available</div>
                 </div>
               </div>
             </div>
@@ -197,7 +79,7 @@ export default function FindMatches() {
               Your Upcoming Concerts
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-              {myConcerts.concerts.map(concert => (
+              {myConcerts.concerts?.map(concert => (
                 <div key={concert.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 text-center">
                   <div className="text-white font-medium text-sm mb-1">{concert.title}</div>
                   <div className="text-gray-400 text-xs">{new Date(concert.date).toLocaleDateString()}</div>
@@ -220,8 +102,12 @@ export default function FindMatches() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {findMatches.users.map((match) => (
-                <MatchCard key={match.id} match={match} onConnect={handleConnect} />
+              {findMatches.users?.map((match) => (
+                <MatchCard 
+                  key={match.id} 
+                  match={match} 
+                  onSendConnectionRequest={handleSendConnectionRequest}
+                />
               ))}
             </div>
           </div>
