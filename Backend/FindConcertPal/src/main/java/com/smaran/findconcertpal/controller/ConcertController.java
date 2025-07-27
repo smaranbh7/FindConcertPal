@@ -7,6 +7,7 @@ import com.smaran.findconcertpal.repo.UserRepo;
 import com.smaran.findconcertpal.response.ServerResponse;
 import com.smaran.findconcertpal.service.ConcertService;
 import com.smaran.findconcertpal.service.TicketmasterService;
+import com.smaran.findconcertpal.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,11 +23,13 @@ public class ConcertController {
     private final TicketmasterService ticketmasterService;
     private final UserRepo userRepo;
     private final ConcertService concertService;
+    private final UserService userService;
 
-    public ConcertController(TicketmasterService ticketmasterService, UserRepo userRepo, ConcertService concertService){
+    public ConcertController(TicketmasterService ticketmasterService, UserRepo userRepo, ConcertService concertService, UserService userService){
         this.ticketmasterService=ticketmasterService;
         this.userRepo= userRepo;
         this.concertService=concertService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -80,8 +83,8 @@ public class ConcertController {
         if(userDetails == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        concertService.userConcertNotGoing(concertId);
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        concertService.userConcertNotGoing(user.getId(), concertId);
         ServerResponse response = new ServerResponse("Matching userConcert deleted successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

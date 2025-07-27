@@ -68,8 +68,8 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     @Transactional
-    public void userConcertNotGoing(String concertId) throws Exception {
-        userConcertRepo.deleteUserConcertByConcertId(concertId);
+    public void userConcertNotGoing(Long userId, String concertId) throws Exception {
+        userConcertRepo.deleteByUser_IdAndConcertId(userId, concertId);
 
     }
 }

@@ -1,5 +1,6 @@
 package com.smaran.findconcertpal.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class UserMatch {
 
     @ManyToOne
     private User sender;
+
     @ManyToOne
     private User receiver;
 

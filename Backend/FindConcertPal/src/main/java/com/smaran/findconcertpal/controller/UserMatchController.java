@@ -86,7 +86,7 @@ public class UserMatchController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/receivedRequests/delete")
+    @PostMapping("/receivedRequests/decline")
     public ResponseEntity<ServerResponse> deleteMatchRequest(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody Long matchId
