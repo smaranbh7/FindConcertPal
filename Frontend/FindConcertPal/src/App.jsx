@@ -5,6 +5,7 @@ import Landing from "./pages/Landing"
 import Dashboard from "./pages/Dashboard"
 import MyConcerts from "./pages/MyConcerts"
 import FindMatches from "./pages/FindMatches"
+import ConnectionRequests from "./pages/ConnectionRequests"
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getUser } from "./redux/auth/Action";
@@ -38,6 +39,7 @@ function App() {
       <Route path="/home" element={<Dashboard />}/>
       <Route path="/my-concerts" element={<MyConcerts />}/>
       <Route path="/find-matches" element={<FindMatches />}/>
+      <Route path="/connection-requests" element={<ConnectionRequests />}/>
       </>
     ):(
       <>
@@ -49,9 +51,6 @@ function App() {
       
     </Routes>
     </>
-   
-    
-    
   )
 }
 

@@ -1,18 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { logout } from "../redux/auth/Action"
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { getMatchRequest } from "../redux/findMatches/Action";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { auth } = useSelector(store => store);
+  const { auth, findMatches } = useSelector(store => store);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleLogout = () => {
      dispatch(logout());
      navigate("/");
   };
+
+  useEffect(()=>{
+    dispatch(getMatchRequest());
+  },[dispatch])
+
 
   return (
     <nav className="bg-white shadow-lg border-b">
@@ -54,7 +60,7 @@ export default function Navbar() {
               Connection Requests
               {/* Notification badge - you can make this dynamic */}
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                3
+                {findMatches.incomingMatchingRequests.length || '0'}
               </span>
             </Link>
           </div>
