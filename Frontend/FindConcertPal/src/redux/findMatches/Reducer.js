@@ -28,7 +28,7 @@ export const findMatchesReducer =(state=initialState, action ) =>{
             return {...state, loading: false, incomingMatchingRequests: action.matchingRequests, error:null};
         
         case ACCEPT_MATCH_REQUEST_SUCCESS:
-            return {...state, loading: false, error: null};
+            return {...state, loading: false, incomingMatchingRequests: state.incomingMatchingRequests.filter((request)=> request.id != action.payload) ,error: null};
         
         case REJECT_MATCH_REQUEST_SUCCESS:
             return {...state, loading: false, incomingMatchingRequests: state.incomingMatchingRequests.filter((request)=>request.id != action.payload) ,error: null};
