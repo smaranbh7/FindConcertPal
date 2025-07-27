@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserMatchRepo extends JpaRepository<UserMatch, Long> {
-    List<UserMatch> findUserMatchByReceiver(User user);
+    List<UserMatch> findByReceiverAndStatus(User user, UserMatch.RequestStatus status);
     UserMatch findUserMatchById(Long userMatchId);
 }

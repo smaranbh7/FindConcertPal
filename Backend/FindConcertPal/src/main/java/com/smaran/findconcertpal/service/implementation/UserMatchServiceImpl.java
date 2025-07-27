@@ -94,7 +94,7 @@ public class UserMatchServiceImpl implements UserMatchService {
 
     @Override
     public List<UserMatchDTO> getMatchRequests(User user) throws Exception {
-        List<UserMatch> receivedRequests = userMatchRepo.findUserMatchByReceiver(user);
+        List<UserMatch> receivedRequests = userMatchRepo.findByReceiverAndStatus(user, UserMatch.RequestStatus.PENDING);
         if(receivedRequests.isEmpty()){
             return new ArrayList<>();
         }
