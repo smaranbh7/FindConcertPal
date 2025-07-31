@@ -22,7 +22,7 @@ export const findMatchesReducer =(state=initialState, action ) =>{
             return {...state, loading: false, users: action.users, error: null};
         
         case SEND_MATCH_REQUEST_SUCCESS:
-            return {...state, loading:false, error:null};
+            return {...state, loading:false, users: state.users.filter((user)=>user.id!=action.payload) ,error:null};
         
         case GET_MATCH_REQUESTS_SUCCESS:
             return {...state, loading: false, incomingMatchingRequests: action.matchingRequests, error:null};

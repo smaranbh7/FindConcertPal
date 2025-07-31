@@ -18,7 +18,7 @@ export const sendMatchRequest = (receiverId) => async(dispatch) =>{
     try{
         const { data } = await api.post("/api/match", receiverId);
         console.log("Match request sent to "+ receiverId);
-        dispatch({type:SEND_MATCH_REQUEST_SUCCESS, payload:data})
+        dispatch({type:SEND_MATCH_REQUEST_SUCCESS, payload:receiverId})
     }catch(error){
         console.error("Error sending request to the user "+ error);
     }
