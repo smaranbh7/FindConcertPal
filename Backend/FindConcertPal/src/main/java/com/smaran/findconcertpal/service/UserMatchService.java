@@ -3,6 +3,7 @@ package com.smaran.findconcertpal.service;
 import com.smaran.findconcertpal.dto.UserDTO;
 import com.smaran.findconcertpal.dto.UserMatchDTO;
 import com.smaran.findconcertpal.model.User;
+import com.smaran.findconcertpal.model.UserMatch;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface UserMatchService {
     void acceptMatchRequest(User user, Long userMatchId) throws Exception;
     void deleteMatchRequest(User user, Long matchId) throws Exception;
     List<UserMatchDTO> getMatchRequests(User user) throws Exception;
+    List<UserMatch> usersAlreadyInUserMatchTable(Long userA, Long userB) throws Exception;
 }

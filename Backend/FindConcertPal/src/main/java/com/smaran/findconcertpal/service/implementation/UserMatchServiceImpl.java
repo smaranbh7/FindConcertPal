@@ -43,7 +43,7 @@ public class UserMatchServiceImpl implements UserMatchService {
             String concertId = uc.getConcertId();
             List<UserDTO> usersForConcert = usersGoingSameConcerts(concertId);
             for (UserDTO dto : usersForConcert) {
-                if (!dto.getId().equals(currentUserId)) {  // exclude current user
+                if (!dto.getId().equals(currentUserId) && usersAlreadyInUserMatchTable(currentUserId, dto.getId()).isEmpty()) {  // exclude current user
                     potentialMatchingUsers.add(dto);
                 }
             }
@@ -116,6 +116,13 @@ public class UserMatchServiceImpl implements UserMatchService {
             userDTOS.add(userMatchDTO);
         }
         return userDTOS;
+    }
+
+//For not showing the users, who are already in the process of connection, in the matching Users list
+    @Override
+    public List<UserMatch> usersAlreadyInUserMatchTable(Long userA, Long userB ) throws Exception {
+        List<UserMatch> users = userMatchRepo.findStatusBetweenUsers(userA, userB, List.of(UserMatch.RequestStatus.PENDING, UserMatch.RequestStatus.ACCEPTED));
+        return users;
     }
 
 
