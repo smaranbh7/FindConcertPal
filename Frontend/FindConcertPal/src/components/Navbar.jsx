@@ -63,6 +63,15 @@ export default function Navbar() {
                 {findMatches.incomingMatchingRequests.length || '0'}
               </span>
             </Link>
+
+            <Link
+              to="/chat" 
+              className="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors relative">
+              Chat
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {'0'}
+              </span>
+            </Link>
           </div>
 
           {/* User Profile Section */}

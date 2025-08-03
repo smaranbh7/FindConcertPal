@@ -5,6 +5,7 @@ import Landing from "./pages/Landing"
 import Dashboard from "./pages/Dashboard"
 import MyConcerts from "./pages/MyConcerts"
 import FindMatches from "./pages/FindMatches"
+import Chat from "./pages/Chat"
 import ConnectionRequests from "./pages/ConnectionRequests"
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -40,6 +41,7 @@ function App() {
       <Route path="/my-concerts" element={<MyConcerts />}/>
       <Route path="/find-matches" element={<FindMatches />}/>
       <Route path="/connection-requests" element={<ConnectionRequests />}/>
+      <Route path="/chat" element={<Chat />} />
       </>
     ):(
       <>
