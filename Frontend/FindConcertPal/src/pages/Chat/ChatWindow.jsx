@@ -1,14 +1,122 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import websocketService from "../../services/websocketService";
 
 export default function ChatWindow({ chat, onSend }) {
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [isWebSocketReady, setIsWebSocketReady] = useState(false);
   const messagesEndRef = useRef(null);
+  const { user } = useSelector(store => store.auth);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chat?.messages]);
+  }, [messages]);
+
+  // Load chat history when chat changes
+  useEffect(() => {
+    if (chat?.user?.id && user?.id) {
+      console.log('Loading chat history between users:', user.id, 'and', chat.user.id);
+      
+      // Fetch chat history from backend
+      fetch(`http://localhost:8080/api/chat/history/${user.id}/${chat.user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Failed to load chat history');
+      })
+      .then(chatHistory => {
+        console.log('Loaded chat history:', chatHistory);
+        
+        // Convert database messages to UI format
+        const convertedMessages = chatHistory.map(msg => ({
+          text: msg.content,
+          fromMe: msg.senderId === user.id.toString(),
+          time: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          timestamp: new Date(msg.timestamp)
+        }));
+        
+        console.log('Converted messages:', convertedMessages);
+        setMessages(convertedMessages);
+      })
+      .catch(error => {
+        console.error('Error loading chat history:', error);
+        // Initialize with empty messages if loading fails
+        setMessages(chat?.messages || []);
+      });
+    } else {
+      // Fallback to chat prop messages
+      setMessages(chat?.messages || []);
+    }
+  }, [chat?.user?.id, user?.id]);
+
+  // Connect to WebSocket when component mounts
+  useEffect(() => {
+    setIsWebSocketReady(false);
+    
+    if (user?.id) {
+      websocketService.connect(user.id.toString())
+        .then(() => {
+          console.log('WebSocket connected and ready');
+          setIsWebSocketReady(true);
+          
+          // Register callback for incoming messages for this chat
+          if (chat?.id) {
+            websocketService.onMessage(chat.id, (incomingMessage) => {
+              console.log('ChatWindow received message:', incomingMessage);
+              console.log('Current chat user ID:', chat.user.id);
+              console.log('Current user ID:', user?.id);
+              console.log('Message sender ID:', incomingMessage.senderId);
+              
+              // Add incoming message to existing chat history
+              console.log('Adding incoming WebSocket message to UI');
+              const newMessage = {
+                text: incomingMessage.content,
+                fromMe: incomingMessage.senderId === user?.id?.toString(),
+                time: new Date(incomingMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                timestamp: new Date(incomingMessage.timestamp)
+              };
+              console.log('New WebSocket message created:', newMessage);
+              
+              setMessages(prev => {
+                // Check if this message already exists (avoid duplicates)
+                const isDuplicate = prev.some(msg => 
+                  msg.text === newMessage.text && 
+                  Math.abs(new Date(msg.timestamp) - new Date(newMessage.timestamp)) < 1000
+                );
+                
+                if (isDuplicate) {
+                  console.log('Duplicate message detected, skipping');
+                  return prev;
+                }
+                
+                console.log('Adding new message to chat history');
+                return [...prev, newMessage];
+              });
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Failed to connect to WebSocket:', error);
+          setIsWebSocketReady(false);
+        });
+    }
+
+    return () => {
+      // Cleanup callback when component unmounts or chat changes
+      if (chat?.id) {
+        websocketService.offMessage(chat.id);
+      }
+      setIsWebSocketReady(false);
+    };
+  }, [user?.id, chat?.id, chat?.user.id]);
 
   // Simulate typing indicator
   useEffect(() => {
@@ -80,9 +188,15 @@ export default function ChatWindow({ chat, onSend }) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-        {chat.messages.map((msg, idx) => {
+        {console.log('Rendering messages in UI:', messages)}
+        {messages.length === 0 && (
+          <div className="text-center text-gray-400 py-8">
+            <p>No messages yet. Send the first message!</p>
+          </div>
+        )}
+        {messages.map((msg, idx) => {
           const isMe = msg.fromMe;
-          const showAvatar = !isMe && (idx === 0 || !chat.messages[idx - 1] || chat.messages[idx - 1].fromMe);
+          const showAvatar = !isMe && (idx === 0 || !messages[idx - 1] || messages[idx - 1].fromMe);
           
           return (
             <div key={idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-2`}>
@@ -165,9 +279,43 @@ export default function ChatWindow({ chat, onSend }) {
           className="flex items-end gap-2 p-4"
           onSubmit={e => {
             e.preventDefault();
-            if (message.trim()) {
-              onSend(message);
-              setMessage("");
+            if (message.trim() && chat?.user.id && user?.id) {
+              if (!isWebSocketReady) {
+                console.warn('WebSocket not ready yet, please wait...');
+                return;
+              }
+              
+              try {
+                console.log('Sending message to user ID:', chat.user.id);
+                console.log('From user ID:', user.id);
+                console.log('Message:', message.trim());
+                
+                // Send via WebSocket
+                const sentMessage = websocketService.sendMessage(chat.user.id.toString(), message.trim());
+                
+                // Add to local messages immediately
+                const newMessage = {
+                  text: message.trim(),
+                  fromMe: true,
+                  time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  timestamp: new Date()
+                };
+                setMessages(prev => [...prev, newMessage]);
+                
+                // Also call onSend if provided (for compatibility)
+                if (onSend) {
+                  onSend(message);
+                }
+                
+                setMessage("");
+              } catch (error) {
+                console.error('Failed to send message:', error);
+                // Fallback to onSend if WebSocket fails
+                if (onSend) {
+                  onSend(message);
+                  setMessage("");
+                }
+              }
             }
           }}
         >
@@ -192,9 +340,42 @@ export default function ChatWindow({ chat, onSend }) {
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  if (message.trim()) {
-                    onSend(message);
-                    setMessage("");
+                  if (message.trim() && chat?.user.id && user?.id) {
+                    if (!isWebSocketReady) {
+                      console.warn('WebSocket not ready yet, please wait...');
+                      return;
+                    }
+                    
+                    try {
+                      console.log('Sending message (Enter key) to user ID:', chat.user.id);
+                      console.log('From user ID:', user.id);
+                      
+                      // Send via WebSocket
+                      const sentMessage = websocketService.sendMessage(chat.user.id.toString(), message.trim());
+                      
+                      // Add to local messages immediately
+                      const newMessage = {
+                        text: message.trim(),
+                        fromMe: true,
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        timestamp: new Date()
+                      };
+                      setMessages(prev => [...prev, newMessage]);
+                      
+                      // Also call onSend if provided (for compatibility)
+                      if (onSend) {
+                        onSend(message);
+                      }
+                      
+                      setMessage("");
+                    } catch (error) {
+                      console.error('Failed to send message:', error);
+                      // Fallback to onSend if WebSocket fails
+                      if (onSend) {
+                        onSend(message);
+                        setMessage("");
+                      }
+                    }
                   }
                 }
               }}
@@ -204,9 +385,9 @@ export default function ChatWindow({ chat, onSend }) {
           {/* Send Button */}
           <button
             type="submit"
-            disabled={!message.trim()}
+            disabled={!message.trim() || !isWebSocketReady}
             className={`p-3 rounded-2xl font-medium transition-all duration-200 ${
-              message.trim()
+              message.trim() && isWebSocketReady
                 ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25"
                 : "bg-gray-600 text-gray-400 cursor-not-allowed"
             }`}

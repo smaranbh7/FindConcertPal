@@ -1,127 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Navbar from "../../components/Navbar";
 import ChatList from "./ChatList";
 import ChatWindow from "./ChatWindow";
-
-// Mock data
-const mockChats = [
-  {
-    id: 1,
-    user: {
-      fullName: "Sarah Johnson",
-      profileImage: "https://images.unsplash.com/photo-1494790108755-2616b612b977?w=400",
-      city: "San Francisco",
-      country: "CA",
-      isOnline: true
-    },
-    lastMessage: "Perfect! Can't wait to experience it together 🎵",
-    lastMessageTime: "2 min",
-    unreadCount: 2,
-    sharedConcert: "Taylor Swift - Eras Tour",
-    messages: [
-      { text: "Hey Sarah! I saw we're both going to Taylor Swift!", fromMe: true, time: "2:15 PM", timestamp: new Date(Date.now() - 3600000) },
-      { text: "OMG yes! I'm so excited! Are you going alone?", fromMe: false, time: "2:16 PM", timestamp: new Date(Date.now() - 3540000) },
-      { text: "Yeah, my friend bailed last minute 😭", fromMe: true, time: "2:17 PM", timestamp: new Date(Date.now() - 3480000) },
-      { text: "Same here! We should definitely meet up before the show", fromMe: false, time: "2:18 PM", timestamp: new Date(Date.now() - 3420000) },
-      { text: "That would be amazing! I have floor seats, section A", fromMe: true, time: "2:20 PM", timestamp: new Date(Date.now() - 3300000) },
-      { text: "No way, I'm in section B! We're literally next to each other", fromMe: false, time: "2:21 PM", timestamp: new Date(Date.now() - 3240000) },
-      { text: "This is perfect! Want to grab dinner before too?", fromMe: true, time: "2:25 PM", timestamp: new Date(Date.now() - 3000000) },
-      { text: "Perfect! Can't wait to experience it together 🎵", fromMe: false, time: "2:26 PM", timestamp: new Date(Date.now() - 120000) }
-    ]
-  },
-  {
-    id: 2,
-    user: {
-      fullName: "Mike Chen",
-      profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-      city: "San Jose",
-      country: "CA",
-      isOnline: false
-    },
-    lastMessage: "Sounds good! I'll be wearing a red jacket",
-    lastMessageTime: "1h",
-    unreadCount: 0,
-    sharedConcert: "The Weeknd - After Hours",
-    messages: [
-      { text: "Hey Mike! Ready for The Weeknd tonight?", fromMe: true, time: "1:00 PM", timestamp: new Date(Date.now() - 7200000) },
-      { text: "Absolutely! This is going to be insane 🔥", fromMe: false, time: "1:05 PM", timestamp: new Date(Date.now() - 6900000) },
-      { text: "I'm planning to get there around 7 PM for the opening act", fromMe: true, time: "1:10 PM", timestamp: new Date(Date.now() - 6600000) },
-      { text: "Great idea! Let's meet at the main entrance around 6:45?", fromMe: false, time: "1:15 PM", timestamp: new Date(Date.now() - 6300000) },
-      { text: "Perfect! How will I recognize you in the crowd?", fromMe: true, time: "1:20 PM", timestamp: new Date(Date.now() - 6000000) },
-      { text: "Sounds good! I'll be wearing a red jacket", fromMe: false, time: "1:25 PM", timestamp: new Date(Date.now() - 5700000) }
-    ]
-  },
-  {
-    id: 3,
-    user: {
-      fullName: "Emma Rodriguez",
-      profileImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
-      city: "Oakland",
-      country: "CA",
-      isOnline: true
-    },
-    lastMessage: "I have an extra poster if you want it!",
-    lastMessageTime: "15 min",
-    unreadCount: 1,
-    sharedConcert: "Billie Eilish - Happier Than Ever",
-    messages: [
-      { text: "Emma! Thanks for connecting on FindConcertPal", fromMe: true, time: "12:30 PM", timestamp: new Date(Date.now() - 9000000) },
-      { text: "Of course! Fellow Billie fan 💚", fromMe: false, time: "12:32 PM", timestamp: new Date(Date.now() - 8880000) },
-      { text: "I saw you've been to 3 of her shows already! Any tips?", fromMe: true, time: "12:35 PM", timestamp: new Date(Date.now() - 8700000) },
-      { text: "She usually does 2 encores, so don't leave early!", fromMe: false, time: "12:40 PM", timestamp: new Date(Date.now() - 8400000) },
-      { text: "Good to know! Are you collecting merch from this tour?", fromMe: true, time: "12:45 PM", timestamp: new Date(Date.now() - 8100000) },
-      { text: "Always! I have an extra poster if you want it!", fromMe: false, time: "12:50 PM", timestamp: new Date(Date.now() - 900000) }
-    ]
-  },
-  {
-    id: 4,
-    user: {
-      fullName: "Alex Thompson",
-      profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
-      city: "Berkeley",
-      country: "CA",
-      isOnline: false
-    },
-    lastMessage: "Thanks for the recommendation!",
-    lastMessageTime: "3h",
-    unreadCount: 0,
-    sharedConcert: "Arctic Monkeys - The Car Tour",
-    messages: [
-      { text: "Alex! Ready for Arctic Monkeys tomorrow?", fromMe: true, time: "10:00 AM", timestamp: new Date(Date.now() - 18000000) },
-      { text: "Can't wait! First time seeing them live", fromMe: false, time: "10:05 AM", timestamp: new Date(Date.now() - 17700000) },
-      { text: "You're in for a treat! They're incredible live", fromMe: true, time: "10:10 AM", timestamp: new Date(Date.now() - 17400000) },
-      { text: "Any song recommendations I should listen to before?", fromMe: false, time: "10:15 AM", timestamp: new Date(Date.now() - 17100000) },
-      { text: "Definitely R U Mine and Do I Wanna Know - crowd favorites!", fromMe: true, time: "10:20 AM", timestamp: new Date(Date.now() - 16800000) },
-      { text: "Thanks for the recommendation!", fromMe: false, time: "10:25 AM", timestamp: new Date(Date.now() - 10800000) }
-    ]
-  },
-  {
-    id: 5,
-    user: {
-      fullName: "Jessica Wu",
-      profileImage: "https://images.unsplash.com/photo-1488508872907-592763824245?w=400",
-      city: "Palo Alto",
-      country: "CA",
-      isOnline: true
-    },
-    lastMessage: "See you at 8! 🎸",
-    lastMessageTime: "30 min",
-    unreadCount: 0,
-    sharedConcert: "John Mayer - Sob Rock Tour",
-    messages: [
-      { text: "Jessica! Are you heading to John Mayer tonight?", fromMe: true, time: "7:00 PM", timestamp: new Date(Date.now() - 1800000) },
-      { text: "Yes! Can't believe I finally got tickets", fromMe: false, time: "7:02 PM", timestamp: new Date(Date.now() - 1680000) },
-      { text: "His guitar solos are unreal live. You'll love it!", fromMe: true, time: "7:05 PM", timestamp: new Date(Date.now() - 1500000) },
-      { text: "I'm getting there early for merch. Meet up?", fromMe: false, time: "7:10 PM", timestamp: new Date(Date.now() - 1200000) },
-      { text: "Absolutely! I'll be there around 8 PM", fromMe: true, time: "7:15 PM", timestamp: new Date(Date.now() - 900000) },
-      { text: "See you at 8! 🎸", fromMe: false, time: "7:30 PM", timestamp: new Date(Date.now() - 1800000) }
-    ]
-  }
-];
+import websocketService from "../../services/websocketService";
+import { getAcceptedMatches } from "../../redux/chat/Action";
 
 export default function Chat() {
-  const [chats, setChats] = useState(mockChats);
-  const [selectedChatId, setSelectedChatId] = useState(chats[0]?.id);
+  const [chats, setChats] = useState([]);
+  const [selectedChatId, setSelectedChatId] = useState(null);
+  const { user } = useSelector(store => store.auth);
+  const { acceptedMatches, loading } = useSelector(store => store.chat);
+  const dispatch = useDispatch();
+
+  // Fetch accepted matches when component mounts
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(getAcceptedMatches());
+    }
+  }, [dispatch, user?.id]);
+
+  // Initialize WebSocket connection when component mounts
+  useEffect(() => {
+    if (user?.id) {
+      websocketService.connect(user.id.toString())
+        .then(() => {
+          console.log('Connected to WebSocket from Chat component');
+        })
+        .catch(error => {
+          console.error('Failed to connect to WebSocket:', error);
+        });
+    }
+
+    return () => {
+      // Cleanup WebSocket connection when component unmounts
+      websocketService.disconnect();
+    };
+  }, [user?.id]);
+
+  // Convert accepted matches to chat format
+  useEffect(() => {
+    if (acceptedMatches?.length > 0) {
+      console.log('Accepted matches:', acceptedMatches);
+      console.log('Current user ID:', user?.id);
+      
+      const convertedChats = acceptedMatches.map((match, index) => {
+        // Use the actual user ID, not the match ID
+        const chatUser = {
+          id: match.id, // This should be the other user's ID from backend
+          fullName: match.fullName,
+          profileImage: match.profileImageUrl || "https://images.unsplash.com/photo-1494790108755-2616b612b977?w=400",
+          city: match.city,
+          country: match.country || match.state,
+          isOnline: Math.random() > 0.5 // Random online status for now
+        };
+        
+        console.log('Chat user:', chatUser);
+        
+        return {
+          id: `chat_${match.id}`, // Use a unique chat ID
+          user: chatUser,
+          lastMessage: "Start a conversation...",
+          lastMessageTime: "now",
+          unreadCount: 0,
+          sharedConcert: match.concertId ? `Concert ${match.concertId}` : "Shared Interest",
+          messages: [] // Start with empty messages
+        };
+      });
+      
+      setChats(convertedChats);
+      
+      // Set first chat as selected if none selected
+      if (!selectedChatId && convertedChats.length > 0) {
+        setSelectedChatId(convertedChats[0].id);
+      }
+    }
+  }, [acceptedMatches, selectedChatId]);
 
   const handleSend = (text) => {
     setChats(prev =>
@@ -141,6 +95,38 @@ export default function Chat() {
   };
 
   const selectedChat = chats.find(chat => chat.id === selectedChatId);
+
+  if (loading) {
+    return (
+      <div className="h-screen bg-gradient-to-br from-slate-900 via-gray-800 to-slate-800 flex flex-col overflow-hidden">
+        <Navbar />
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-white text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+            <p>Loading your chats...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!loading && acceptedMatches?.length === 0) {
+    return (
+      <div className="h-screen bg-gradient-to-br from-slate-900 via-gray-800 to-slate-800 flex flex-col overflow-hidden">
+        <Navbar />
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-white text-center">
+            <svg className="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <h3 className="text-xl font-semibold mb-2">No Chat Partners Yet</h3>
+            <p className="text-gray-400 mb-4">You don't have any accepted matches to chat with.</p>
+            <p className="text-sm text-gray-500">Send match requests to other users and wait for them to accept!</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-900 via-gray-800 to-slate-800 flex flex-col overflow-hidden">

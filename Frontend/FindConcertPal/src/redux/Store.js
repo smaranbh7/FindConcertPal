@@ -5,12 +5,14 @@ import { thunk  } from "redux-thunk"
 import { concertReducer } from "./concert/Reducer";
 import { myConcertsReducer } from "./myConcerts/Reducer";
 import { findMatchesReducer } from "./findMatches/Reducer"
+import { chatReducer } from "./chat/Reducer";
 
 const rootReducer= combineReducers({
     auth: authReducer,
     concert: concertReducer,
     myConcerts: myConcertsReducer,
-    findMatches: findMatchesReducer
+    findMatches: findMatchesReducer,
+    chat: chatReducer
 
 });
 
