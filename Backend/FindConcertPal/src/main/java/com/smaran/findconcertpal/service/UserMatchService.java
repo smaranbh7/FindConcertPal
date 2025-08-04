@@ -15,4 +15,5 @@ public interface UserMatchService {
     void deleteMatchRequest(User user, Long matchId) throws Exception;
     List<UserMatchDTO> getMatchRequests(User user) throws Exception;
     List<UserMatch> usersAlreadyInUserMatchTable(Long userA, Long userB) throws Exception;
+    List<UserMatchDTO> getAcceptedMatches(User user) throws Exception;
 }

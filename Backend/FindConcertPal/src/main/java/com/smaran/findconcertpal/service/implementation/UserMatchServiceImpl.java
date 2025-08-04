@@ -153,5 +153,41 @@ public class UserMatchServiceImpl implements UserMatchService {
         }
     }
 
+    @Override
+    public List<UserMatchDTO> getAcceptedMatches(User user) throws Exception {
+        // Get all accepted matches where the user is either sender or receiver
+        List<UserMatch> acceptedMatches = userMatchRepo.findByStatus(UserMatch.RequestStatus.ACCEPTED);
+        List<UserMatchDTO> chatPartners = new ArrayList<>();
+        
+        for (UserMatch match : acceptedMatches) {
+            User chatPartner = null;
+            
+            // Determine who the chat partner is (the other person in the match)
+            if (match.getSender().getId().equals(user.getId())) {
+                chatPartner = match.getReceiver();
+            } else if (match.getReceiver().getId().equals(user.getId())) {
+                chatPartner = match.getSender();
+            }
+            
+            // If this match involves the current user, add the other person as a chat partner
+            if (chatPartner != null) {
+                UserMatchDTO chatPartnerDTO = new UserMatchDTO();
+                chatPartnerDTO.setId(chatPartner.getId());
+                chatPartnerDTO.setFullName(chatPartner.getFullName());
+                chatPartnerDTO.setAge(chatPartner.getAge());
+                chatPartnerDTO.setEmail(chatPartner.getEmail());
+                chatPartnerDTO.setCity(chatPartner.getCity());
+                chatPartnerDTO.setState(chatPartner.getState());
+                chatPartnerDTO.setCountry(chatPartner.getCountry());
+                chatPartnerDTO.setGenres(chatPartner.getGenres());
+                chatPartnerDTO.setProfileImageUrl(chatPartner.getProfileImageUrl());
+                chatPartnerDTO.setBio(chatPartner.getBio());
+                chatPartnerDTO.setConcertId(match.getConcertId()); // Include shared concert
+                chatPartners.add(chatPartnerDTO);
+            }
+        }
+        
+        return chatPartners;
+    }
 
 }

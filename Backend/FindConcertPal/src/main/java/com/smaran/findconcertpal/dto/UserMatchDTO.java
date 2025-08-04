@@ -22,4 +22,6 @@ public class UserMatchDTO {
     private String profileImageUrl;
 
     private String bio;
+    
+    private String concertId; // Shared concert ID
 }

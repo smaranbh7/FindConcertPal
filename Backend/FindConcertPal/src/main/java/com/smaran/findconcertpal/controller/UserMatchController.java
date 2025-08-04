@@ -101,4 +101,17 @@ public class UserMatchController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/accepted")
+    public ResponseEntity<List<UserMatchDTO>> getAcceptedMatches(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) throws Exception {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        List<UserMatchDTO> acceptedMatches = userMatchService.getAcceptedMatches(user);
+
+        return new ResponseEntity<>(acceptedMatches, HttpStatus.OK);
+    }
 }
