@@ -17,9 +17,9 @@ export default function FindMatches() {
     dispatch(getMatchingUsers());
   }, [dispatch]);
 
-  const handleSendConnectionRequest = (receiverId) => {
+  const handleSendConnectionRequest = (receiverId, concertId) => {
     console.log(`Sending connection request to user ID: ${receiverId}`);
-    dispatch(sendMatchRequest(receiverId))
+    dispatch(sendMatchRequest(receiverId, concertId))
   };
 
   return (

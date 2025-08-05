@@ -3,7 +3,8 @@ import React from "react";
 export default function MatchCard({ match, onSendConnectionRequest }) {
   const handleClick = () => {
     if (onSendConnectionRequest) {
-      onSendConnectionRequest(match.id);
+      onSendConnectionRequest(match.id, match.concertId
+);
     }
   };
 

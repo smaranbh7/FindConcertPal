@@ -13,10 +13,10 @@ export const getMatchingUsers=()=>async(dispatch) =>{
 }
 
 
-export const sendMatchRequest = (receiverId) => async(dispatch) =>{
+export const sendMatchRequest = (receiverId, concertId) => async(dispatch) =>{
     dispatch({type: SEND_MATCH_REQUEST_REQUEST});
     try{
-        const { data } = await api.post("/api/match", receiverId);
+        const { data } = await api.post("/api/match", {receiverId, concertId});
         console.log("Match request sent to "+ receiverId);
         dispatch({type:SEND_MATCH_REQUEST_SUCCESS, payload:receiverId})
     }catch(error){
