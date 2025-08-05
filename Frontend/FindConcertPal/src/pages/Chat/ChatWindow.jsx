@@ -18,7 +18,6 @@ export default function ChatWindow({ chat, onSend }) {
   // Load chat history when chat changes
   useEffect(() => {
     if (chat?.user?.id && user?.id) {
-      console.log('Loading chat history between users:', user.id, 'and', chat.user.id);
       
       // Fetch chat history from backend
       fetch(`http://localhost:8080/api/chat/history/${user.id}/${chat.user.id}`, {
@@ -33,7 +32,6 @@ export default function ChatWindow({ chat, onSend }) {
         throw new Error('Failed to load chat history');
       })
       .then(chatHistory => {
-        console.log('Loaded chat history:', chatHistory);
         
         // Convert database messages to UI format
         const convertedMessages = chatHistory.map(msg => ({
@@ -42,8 +40,6 @@ export default function ChatWindow({ chat, onSend }) {
           time: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           timestamp: new Date(msg.timestamp)
         }));
-        
-        console.log('Converted messages:', convertedMessages);
         setMessages(convertedMessages);
       })
       .catch(error => {
@@ -64,26 +60,17 @@ export default function ChatWindow({ chat, onSend }) {
     if (user?.id) {
       websocketService.connect(user.id.toString())
         .then(() => {
-          console.log('WebSocket connected and ready');
           setIsWebSocketReady(true);
           
           // Register callback for incoming messages for this chat
           if (chat?.id) {
             websocketService.onMessage(chat.id, (incomingMessage) => {
-              console.log('ChatWindow received message:', incomingMessage);
-              console.log('Current chat user ID:', chat.user.id);
-              console.log('Current user ID:', user?.id);
-              console.log('Message sender ID:', incomingMessage.senderId);
-              
-              // Add incoming message to existing chat history
-              console.log('Adding incoming WebSocket message to UI');
               const newMessage = {
                 text: incomingMessage.content,
                 fromMe: incomingMessage.senderId === user?.id?.toString(),
                 time: new Date(incomingMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 timestamp: new Date(incomingMessage.timestamp)
               };
-              console.log('New WebSocket message created:', newMessage);
               
               setMessages(prev => {
                 // Check if this message already exists (avoid duplicates)
@@ -93,11 +80,8 @@ export default function ChatWindow({ chat, onSend }) {
                 );
                 
                 if (isDuplicate) {
-                  console.log('Duplicate message detected, skipping');
                   return prev;
                 }
-                
-                console.log('Adding new message to chat history');
                 return [...prev, newMessage];
               });
             });
@@ -188,7 +172,6 @@ export default function ChatWindow({ chat, onSend }) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-        {console.log('Rendering messages in UI:', messages)}
         {messages.length === 0 && (
           <div className="text-center text-gray-400 py-8">
             <p>No messages yet. Send the first message!</p>
@@ -281,14 +264,10 @@ export default function ChatWindow({ chat, onSend }) {
             e.preventDefault();
             if (message.trim() && chat?.user.id && user?.id) {
               if (!isWebSocketReady) {
-                console.warn('WebSocket not ready yet, please wait...');
                 return;
               }
               
               try {
-                console.log('Sending message to user ID:', chat.user.id);
-                console.log('From user ID:', user.id);
-                console.log('Message:', message.trim());
                 
                 // Send via WebSocket
                 const sentMessage = websocketService.sendMessage(chat.user.id.toString(), message.trim());
@@ -346,10 +325,7 @@ export default function ChatWindow({ chat, onSend }) {
                       return;
                     }
                     
-                    try {
-                      console.log('Sending message (Enter key) to user ID:', chat.user.id);
-                      console.log('From user ID:', user.id);
-                      
+                    try { 
                       // Send via WebSocket
                       const sentMessage = websocketService.sendMessage(chat.user.id.toString(), message.trim());
                       
