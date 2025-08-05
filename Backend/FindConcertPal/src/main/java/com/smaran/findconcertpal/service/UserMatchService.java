@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserMatchService {
     List<UserDTO> matchingUsers(User user) throws Exception;
     List<UserDTO> usersGoingSameConcerts(String concertId ) throws Exception;
-    void sendMatchRequest(Long senderId, Long receiverId) throws Exception;
+    void sendMatchRequest(Long senderId, Long receiverId, String concertId) throws Exception;
     void acceptMatchRequest(User user, Long userMatchId) throws Exception;
     void deleteMatchRequest(User user, Long matchId) throws Exception;
     List<UserMatchDTO> getMatchRequests(User user) throws Exception;

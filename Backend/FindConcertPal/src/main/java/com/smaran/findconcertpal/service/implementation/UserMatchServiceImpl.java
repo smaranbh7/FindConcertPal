@@ -54,13 +54,14 @@ public class UserMatchServiceImpl implements UserMatchService {
 
     @Override
     @Transactional
-    public void sendMatchRequest(Long senderId, Long receiverId) throws Exception {
+    public void sendMatchRequest(Long senderId, Long receiverId, String concertId) throws Exception {
         User sender = userService.findUserById(senderId);
         User receiver = userService.findUserById(receiverId);
 
         UserMatch userMatchRequest = new UserMatch();
         userMatchRequest.setSender(sender);
         userMatchRequest.setReceiver(receiver);
+        userMatchRequest.setConcertId(concertId);
         userMatchRequest.setStatus(UserMatch.RequestStatus.PENDING);
         userMatchRepo.save(userMatchRequest);
     }
@@ -147,6 +148,7 @@ public class UserMatchServiceImpl implements UserMatchService {
                 userDTO.setGenres(user.getGenres());
                 userDTO.setProfileImageUrl(user.getProfileImageUrl());
                 userDTO.setBio(user.getBio());
+                userDTO.setConcertId(concertId);
                 userDTOs.add(userDTO);
             }
             return userDTOs;

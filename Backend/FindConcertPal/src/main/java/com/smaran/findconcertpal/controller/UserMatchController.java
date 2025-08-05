@@ -1,5 +1,6 @@
 package com.smaran.findconcertpal.controller;
 
+import com.smaran.findconcertpal.dto.MatchRequestDTO;
 import com.smaran.findconcertpal.dto.UserDTO;
 import com.smaran.findconcertpal.dto.UserMatchDTO;
 import com.smaran.findconcertpal.model.User;
@@ -46,13 +47,13 @@ public class UserMatchController {
     @PostMapping
     public ResponseEntity<ServerResponse> sendMatchRequest(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody Long receiverId
-    )throws Exception{
+            @RequestBody MatchRequestDTO matchRequestDTO
+            )throws Exception{
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User user = userService.findUserByEmail(userDetails.getUsername());
-        userMatchService.sendMatchRequest(user.getId(), receiverId);
+        userMatchService.sendMatchRequest(user.getId(), matchRequestDTO.getReceiverId(), matchRequestDTO.getConcertId());
 
         ServerResponse response = new ServerResponse("Request sent to user successfully!");
         return new ResponseEntity<>(response, HttpStatus.OK);
