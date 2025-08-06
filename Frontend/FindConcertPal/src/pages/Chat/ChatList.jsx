@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMyConcerts } from "../../redux/myConcerts/Action";
 
 export default function ChatList({ chats, selectedChatId, onSelect }) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { myConcerts } = useSelector(store => store);
+  console.log(chats)
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    dispatch(fetchMyConcerts());
+  }, [dispatch])
 
+  const [searchTerm, setSearchTerm] = useState("");
   const filteredChats = chats.filter(chat =>
     chat.user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     chat.sharedConcert.toLowerCase().includes(searchTerm.toLowerCase())
@@ -69,13 +77,13 @@ export default function ChatList({ chats, selectedChatId, onSelect }) {
                 <span className="text-gray-400 text-xs">{chat.lastMessageTime}</span>
               </div>
 
-              {/* Concert Row */}
+              {/* Concert Row
               <div className="flex items-center mb-1">
                 <svg className="w-3 h-3 text-purple-400 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217z" clipRule="evenodd" />
                 </svg>
-                <span className="text-purple-300 text-xs truncate">{chat.sharedConcert}</span>
-              </div>
+                <span className="text-purple-300 text-xs truncate">{"Connected for: "+chat.sharedConcert }</span>
+              </div> */}
 
               {/* Last Message Row */}
               <p className="text-gray-400 text-xs truncate">{chat.lastMessage}</p>

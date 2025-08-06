@@ -10,6 +10,7 @@ export default function Chat() {
   const [chats, setChats] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const { user } = useSelector(store => store.auth);
+  const { myConcerts }= useSelector(store => store)
   const { acceptedMatches, loading } = useSelector(store => store.chat);
   const dispatch = useDispatch();
 
@@ -41,10 +42,9 @@ export default function Chat() {
   // Convert accepted matches to chat format
   useEffect(() => {
     if (acceptedMatches?.length > 0) {
-      console.log('Accepted matches:', acceptedMatches);
-      console.log('Current user ID:', user?.id);
-      
+
       const convertedChats = acceptedMatches.map((match, index) => {
+        const sharedConcertId=match.concertId
         // Use the actual user ID, not the match ID
         const chatUser = {
           id: match.id, // This should be the other user's ID from backend
@@ -56,14 +56,15 @@ export default function Chat() {
         };
         
         console.log('Chat user:', chatUser);
-        
+        const sharedConcert = myConcerts?.concerts?.find(concert => String(concert.concertId) === String(sharedConcertId));
+        console.log("----->>>>>>>"+sharedConcert)
         return {
           id: `chat_${match.id}`, // Use a unique chat ID
           user: chatUser,
           lastMessage: "Start a conversation...",
           lastMessageTime: "now",
           unreadCount: 0,
-          sharedConcert: match.concertId ? `Concert ${match.concertId}` : "Shared Interest",
+          sharedConcert:sharedConcert?.title,
           messages: [] // Start with empty messages
         };
       });
@@ -75,7 +76,7 @@ export default function Chat() {
         setSelectedChatId(convertedChats[0].id);
       }
     }
-  }, [acceptedMatches, selectedChatId]);
+  }, [acceptedMatches, selectedChatId, myConcerts]);
 
   const handleSend = (text) => {
     setChats(prev =>
