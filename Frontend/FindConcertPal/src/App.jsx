@@ -11,6 +11,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getUser } from "./redux/auth/Action";
 import Login from "./pages/Auth/Login";
+import Profile from "./pages/Profile/index"
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
       <Route path="/find-matches" element={<FindMatches />}/>
       <Route path="/connection-requests" element={<ConnectionRequests />}/>
       <Route path="/chat" element={<Chat />} />
+      <Route path="/profile" element={<Profile />}/>
       </>
     ):(
       <>

@@ -7,7 +7,7 @@ import { getMatchRequest } from "../redux/findMatches/Action";
 export default function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { auth, findMatches } = useSelector(store => store);
+  const { auth, findMatches, chat } = useSelector(store => store);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleLogout = () => {
