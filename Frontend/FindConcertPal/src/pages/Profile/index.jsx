@@ -38,7 +38,6 @@ export default function Profile() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
   const { loading, error, uploadingImage } = useSelector(state => state.profile);
-  const { concerts: upcomingConcerts } = useSelector(state => state.myConcerts);
 
   const handleUpdateProfile = async (updatedData) => {
     try {
@@ -138,40 +137,13 @@ export default function Profile() {
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8">
           <h2 className="text-2xl font-semibold text-white mb-4">Favorite Genres</h2>
           <div className="flex flex-wrap gap-2">
-            {(user?.favoriteGenres || fallbackUser.favoriteGenres).map((genre, index) => (
+            {(user?.genres || fallbackUser.favoriteGenres).map((genre, index) => (
               <span
                 key={index}
                 className="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300"
               >
                 {genre}
               </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Upcoming Concerts */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-          <h2 className="text-2xl font-semibold text-white mb-4">Upcoming Concerts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(upcomingConcerts || fallbackUser.upcomingConcerts).map((concert) => (
-              <div
-                key={concert.id}
-                className="bg-white/5 rounded-lg overflow-hidden hover:bg-white/10 transition-colors"
-              >
-                <div className="aspect-video bg-gray-800">
-                  {/* Concert image placeholder */}
-                  <div className="w-full h-full flex items-center justify-center text-gray-500">
-                    🎵
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-white font-semibold mb-2">{concert.title}</h3>
-                  <p className="text-gray-400 text-sm mb-1">{concert.venue}</p>
-                  <p className="text-emerald-400 text-sm">
-                    {new Date(concert.date).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
             ))}
           </div>
         </div>

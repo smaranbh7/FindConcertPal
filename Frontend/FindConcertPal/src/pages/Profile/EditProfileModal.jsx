@@ -9,7 +9,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
     country: user?.country || '',
     bio: user?.bio || '',
     age: user?.age || '',
-    favoriteGenres: user?.favoriteGenres || []
+    favoriteGenres: user?.genres || []
   });
 
   const handleSubmit = (e) => {
@@ -27,7 +27,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
         country: user.country || '',
         bio: user.bio || '',
         age: user.age || '',
-        favoriteGenres: user.favoriteGenres || []
+        favoriteGenres: user.genres || []
       });
     }
   }, [user]);
